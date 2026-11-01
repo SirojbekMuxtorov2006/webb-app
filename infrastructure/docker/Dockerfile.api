@@ -1,0 +1,36 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY apps/api/package*.json ./apps/api/
+COPY apps/web/package*.json ./apps/web/
+COPY apps/worker/package*.json ./apps/worker/
+COPY packages/types/package*.json ./packages/types/
+COPY packages/shared/package*.json ./packages/shared/
+COPY packages/ui/package*.json ./packages/ui/
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build --workspace=@ecommerce/types
+RUN npm run build --workspace=@ecommerce/shared
+RUN npm run build --workspace=@ecommerce/ui
+RUN cd apps/api && npx prisma generate --schema=../../infrastructure/database/schema.postgres.prisma
+RUN npm run build --workspace=api
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+COPY --from=builder /app/packages/ ./packages/
+COPY --from=builder /app/infrastructure/database/schema.postgres.prisma ./prisma/schema.prisma
+
+EXPOSE 4000
+
+CMD ["node", "apps/api/dist/main"]

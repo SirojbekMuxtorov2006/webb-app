@@ -1,0 +1,37 @@
+{
+  "name": "e-cormmes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-Powered Multi-Vendor E-Commerce Platform for Uzbekistan",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:api": "npm run start:dev --workspace=api",
+    "dev:web": "npm run dev --workspace=web",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "db:migrate": "npm run prisma:migrate --workspace=api",
+    "db:seed": "npm run prisma:seed --workspace=api",
+    "db:studio": "npm run prisma:studio --workspace=api",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "keywords": [
+    "ecommerce",
+    "marketplace",
+    "uzbekistan",
+    "ai",
+    "nestjs",
+    "nextjs",
+    "uzum",
+    "multi-vendor"
+  ],
+  "author": "Antigravity Engineering",
+  "license": "MIT",
+  "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.3"
+  }
+}
